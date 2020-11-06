@@ -1,0 +1,43 @@
+{{ $s := newScratch }}
+{{ $s.Set "data" dict }}
+{{ $itemKey := "data-item-" }}
+{{ with .Params.product }}
+  {{ $s.SetInMap "data" (print $itemKey "url") $.Permalink }}
+  {{ with .price }}
+  {{ $s.SetInMap "data" (print $itemKey "price") (partialCached "tnd-snipcart/private/FormatPrice" . .) }}
+  {{ end }}
+  {{ $description := $.Summary }}
+  {{ with .description }}
+    {{ $description = . }}
+  {{ else }}
+    {{ with $.Description }}
+      {{ $description = . }}
+    {{ end }}
+  {{ end }}
+  {{ $s.SetInMap "data" (print $itemKey "description") $description }}
+  {{ with .customs }}
+    {{ range $index, $custom := . }}
+      {{ with .name }}
+        {{ $key := print $itemKey "custom" (add $index 1) "-" }}
+        {{ $s.SetInMap "data" (print $key "name") . }}
+        {{ with $custom.options }}
+          {{ $options := delimit . "|" }}
+          {{ $s.SetInMap "data" (print $key "options") $options }}
+        {{ end }}
+        {{ with $custom.value }}
+          {{ $s.SetInMap "data" (print $key "value") . }}
+        {{ end }}
+        {{ with $custom.placeholder }}
+          {{ $s.SetInMap "data" (print $key "placeholder") . }}
+        {{ end }}
+        {{ with $custom.type }}
+          {{ if eq . "checkbox" "textarea" }}
+            {{ $s.SetInMap "data" (print $key "type") . }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{ return $s.Get "data" }}
