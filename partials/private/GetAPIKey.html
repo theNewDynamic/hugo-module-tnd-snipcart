@@ -1,0 +1,6 @@
+{{ $key := "" }}
+{{ with getenv "SNIPCART_API_KEY" }}
+  {{ $key = . }}
+{{ end }}
+
+{{ return $key }}
