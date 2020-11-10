@@ -2,7 +2,9 @@
 {{ $s.Set "data" dict }}
 {{ $itemKey := "data-item-" }}
 {{ with .Params.product }}
+  {{ $s.SetInMap "data" (print $itemKey "id") $.File.UniqueID }}
   {{ $s.SetInMap "data" (print $itemKey "url") $.Permalink }}
+  {{ $s.SetInMap "data" (print $itemKey "name") $.Title }}
   {{ with .price }}
   {{ $s.SetInMap "data" (print $itemKey "price") (partialCached "tnd-snipcart/private/FormatPrice" . .) }}
   {{ end }}
@@ -15,6 +17,15 @@
     {{ end }}
   {{ end }}
   {{ $s.SetInMap "data" (print $itemKey "description") $description }}
+
+  {{ with .metadata }}
+    {{ $s.SetInMap "data" "metadata" (. | jsonify) }}
+  {{ end }}
+
+  {{ with .categories }}
+    {{ $s.SetInMap "data" "categories" (delimit . "|") }}
+  {{ end }}
+
   {{ with .customs }}
     {{ range $index, $custom := . }}
       {{ with .name }}
@@ -27,11 +38,14 @@
         {{ with $custom.value }}
           {{ $s.SetInMap "data" (print $key "value") . }}
         {{ end }}
+        {{ with $custom.required }}
+          {{ $s.SetInMap "data" (print $key "required") true }}
+        {{ end }}
         {{ with $custom.placeholder }}
           {{ $s.SetInMap "data" (print $key "placeholder") . }}
         {{ end }}
         {{ with $custom.type }}
-          {{ if eq . "checkbox" "textarea" }}
+          {{ if eq . "checkbox" "textarea" "readonly" }}
             {{ $s.SetInMap "data" (print $key "type") . }}
           {{ end }}
         {{ end }}
