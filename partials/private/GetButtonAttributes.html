@@ -1,0 +1,64 @@
+{{/*
+  GetButtonAttributes
+  Return a Map with key fitting Snipcart's attribute name values fitting Snipcart's expected format for any given attribute.
+
+  @author @regisphilibert
+
+  @context Map
+    See /private/ProductData @return
+
+  @access private
+
+  @return Map
+        Any (.data-item-{key})
+        [...]
+
+*/}}
+{{ $s := newScratch }}
+{{ $s.Set "data" dict }}
+{{ $itemKey := "data-item-" }}
+{{ with $product_data := . }}
+  {{ range $key := slice "id" "url" "name" "price" "description" "weight" "width" "length" "height" }}
+    {{ with index $product_data . }}
+    {{ $s.SetInMap "data" (print $itemKey $key) . }}
+    {{ end }}
+  {{ end }}
+
+  {{ with .metadata }}
+    {{ $s.SetInMap "data" (print $itemKey "metadata") (. | jsonify) }}
+  {{ end }}
+
+  {{ with .categories }}
+    {{ $s.SetInMap "data" (print $itemKey "categories") (delimit . "|") }}
+  {{ end }}
+
+  {{ with .custom_fields }}
+    {{ range $index, $custom := . }}
+      {{ with .name }}
+        {{ $key := print $itemKey "custom" (add $index 1) "-" }}
+        {{ $s.SetInMap "data" (print $key "name") . }}
+        {{ with $custom.options }}
+          {{ $options := delimit . "|" }}
+          {{ $s.SetInMap "data" (print $key "options") $options }}
+        {{ end }}
+        {{ with $custom.value }}
+          {{ $s.SetInMap "data" (print $key "value") . }}
+        {{ end }}
+        {{ with $custom.required }}
+          {{ $s.SetInMap "data" (print $key "required") true }}
+        {{ end }}
+        {{ with $custom.placeholder }}
+          {{ $s.SetInMap "data" (print $key "placeholder") . }}
+        {{ end }}
+        {{ with $custom.type }}
+          {{ if eq . "checkbox" "textarea" "readonly" }}
+            {{ $s.SetInMap "data" (print $key "type") . }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+
+{{ return $s.Get "data" }}

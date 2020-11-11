@@ -1,3 +1,21 @@
+{{/*
+  GetFormSettings
+  Retrieve settings given a key matching one from site.Params.tnd_snipcart.forms
+
+  @author @regisphilibert
+
+  @context String (.)
+
+  @access private
+  
+  @use
+    - /private/GetConfig
+
+  @return Map
+    String (.buy_button_text)
+    String | Slice (.buy_button_classes)?
+
+*/}}
 {{ $settings := dict "buy_button_text" "Buy Default" }}
 {{ $config := partialCached "tnd-snipcart/private/GetConfig" "GetConfig" }}
 {{ with $config.forms }}

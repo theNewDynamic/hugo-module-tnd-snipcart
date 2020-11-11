@@ -1,9 +1,31 @@
+{{/*
+  form
+  Print the AddToCart Form on a given product
+
+  @author @regisphilibert
+
+  @context 
+    OR Page (.)
+    OR Map
+        Page (.Page)
+        String (.settings)
+
+  @access public
+
+  @example - Go Template
+      OR {{ partial "tnd-snipcart/form" $ }}
+      OR {{ partial "tnd-snipcart/form" (dict "Page" $ "settings" "homepage") }}
+    {{ end }}
+*/}}
 {{ $buttonData := partial "tnd-snipcart/private/GetFormData" . }}
+{{ $config := partialCached "tnd-snipcart/private/GetConfig" "GetConfig" }}
 {{ with $buttonData }}
-  {{ $button_attrs := merge .button_attributes (dict "class" .buy_button_classes ) }}
+  {{ $button_attrs := merge .buy_button_attributes (dict "class" .buy_button_classes ) }}
   {{ partial "tnd-tags/tag" (dict "name" "button" "attr" $button_attrs "inner" .button_inner) }}
-  <code class="block text-red-300">
-    {{ partial "tnd-tags/tag" (dict "name" "button" "attr" $button_attrs "inner" .button_inner) | string }}
-  </code>
+  {{ if $config.debug }}
+    <code class="block text-red-300">
+      {{ partial "tnd-tags/tag" (dict "name" "button" "attr" $button_attrs "inner" .button_inner) | string }}
+    </code>
+  {{ end }}
 {{ end }}
 

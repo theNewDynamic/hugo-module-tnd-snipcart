@@ -1,0 +1,66 @@
+{{/*
+  GetProductData
+  Parse the Data from a content file entry to expected structured Product data
+
+  @author @regisphilibert
+
+  @context Page (.)
+
+  @access private
+
+  @use
+    - /private/GetConfig
+
+  @return Map
+    String (.id)
+    String (.url)
+    String (.name)
+    Float (.price)
+    String (.description)
+    Map (.metadata)?
+    Slice (.categories)?
+    Int (.weight)?
+    Int (.width)?
+    Int (.length)?
+    Int (.height)?
+    Map (.custom_fields)?
+
+*/}}
+{{ $s := newScratch }}
+{{ $s.Set "data" dict }}
+{{ with $product := $.Params.product }}
+  {{ $s.SetInMap "data" "id" $.File.UniqueID }}
+  {{ $s.SetInMap "data" "url" $.Permalink }}
+  {{ $s.SetInMap "data" "name" $.Title }}
+  {{ with .price }}
+    {{ $s.SetInMap "data" "price" (partialCached "tnd-snipcart/private/FormatPrice" . .) }}
+  {{ end }}
+
+  {{ $description := $.Summary }}
+  {{ with .description }}
+    {{ $description = . }}
+  {{ else }}
+    {{ with $.Description }}
+      {{ $description = . }}
+    {{ end }}
+  {{ end }}
+  {{ $s.SetInMap "data" "description" $description }}
+
+  {{ range $key := slice "metadata" "categories" "weight" "custom_fields" }}
+    {{ with index $product . }}
+      {{ $s.SetInMap "data" $key . }}
+    {{ end }}
+  {{ end }}
+
+  {{ with $dimensions := .dimensions }}
+    {{ range $key := slice "width" "length" "height" }}
+      {{ with index $dimensions . }}
+        {{ $s.SetInMap "data" $key . }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+
+{{ end }}
+
+
+{{ return $s.Get "data" }}
