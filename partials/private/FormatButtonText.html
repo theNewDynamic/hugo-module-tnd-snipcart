@@ -1,0 +1,34 @@
+{{/*
+  FormatButtonText
+
+  @author @regisphilibert
+
+  @context Map (.)
+
+  @access private
+
+  @use
+    - /private/GetConfig
+    - /private/FormatPrice
+
+  @return String
+
+*/}}
+{{ $button_text := "Buy" }}
+{{ with partialCached "tnd-snipcart/private/GetConfig" "GetConfig" }}
+  {{ with .buy_button_text }}
+    {{ $button_text = . }}
+  {{ end }}
+{{ end }}
+
+{{ with findRE "{{[a-z]*}}" $button_text }}
+  {{ if in . "{{price}}" }}
+    {{ with $.price }}
+      {{ with partialCached "tnd-snipcart/private/FormatPrice" . . }}
+        {{ $button_text = replace $button_text "{{price}}" . }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{ return $button_text }}
