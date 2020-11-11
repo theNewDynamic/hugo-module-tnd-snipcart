@@ -1,0 +1,103 @@
+{{ $s := newScratch }}
+{{ $s.Set "return" dict }}
+{{ $s.Set "bnt_attr" dict }}
+
+{{ $itemKey := "data-item-" }}
+{{ $entry := . }}
+{{ $settings_key := "false" }}
+{{ if reflect.IsMap .}}
+  {{ with .Page }}
+    {{ $entry = . }}
+  {{ end }}
+  {{ with .settings }}
+    {{ $settings_key = . }}
+  {{ end }}
+{{ end }}
+
+{{ $settings := partialCached "tnd-snipcart/private/GetATASettings" $settings_key $settings_key }}
+{{ with $entry.Params.product }}
+
+  {{/* Button Inner */}}
+  {{ $FBTParams := dict "data" . "settings" $settings }}
+  {{ $button_text := partialCached "tnd-snipcart/private/FormatButtonText" $FBTParams $FBTParams }}
+  {{ $s.SetInMap "return" "button_inner" $button_text }}
+  
+  {{/* Button Classes */}}
+  {{ $button_classes := slice "snipcart-add-item" "tnd-snipcart-button" }}
+  {{ with $settings.buy_button_classes }}
+    {{ if reflect.IsSlice . }}
+      {{ $button_classes = $button_classes | append . }}
+    {{ else }}
+      {{ $button_classes = $button_classes | append (split . " ") }}
+    {{ end }}
+  {{ end }}
+  {{ $s.SetInMap "return" "buy_button_classes" (delimit $button_classes " ") }}
+
+  {{/* Button Attributes */}}
+  {{ $s.SetInMap "bnt_attr" (print $itemKey "id") $entry.File.UniqueID }}
+  {{ $s.SetInMap "bnt_attr" (print $itemKey "url") $entry.Permalink }}
+  {{ $s.SetInMap "bnt_attr" (print $itemKey "name") $entry.Title }}
+  {{ with .price }}
+    {{ $s.SetInMap "bnt_attr" (print $itemKey "price") (partialCached "tnd-snipcart/private/FormatPrice" . .) }}
+  {{ end }}
+  {{ $description := $entry.Summary }}
+  {{ with .description }}
+    {{ $description = . }}
+  {{ else }}
+    {{ with $entry.Description }}
+      {{ $description = . }}
+    {{ end }}
+  {{ end }}
+  {{ $s.SetInMap "bnt_attr" (print $itemKey "description") $description }}
+
+  {{ with .metadata }}
+    {{ $s.SetInMap "bnt_attr" (print $itemKey "metadata") (. | jsonify) }}
+  {{ end }}
+
+  {{ with .categories }}
+    {{ $s.SetInMap "bnt_attr" (print $itemKey "categories") (delimit . "|") }}
+  {{ end }}
+
+  {{ with .weight }}
+    {{ $s.SetInMap "bnt_attr" (print $itemKey "weight") . }}
+  {{ end }}
+
+  {{ with $dimensions := .dimensions }}
+    {{ range $key := slice "width" "length" "height" }}
+      {{ with index $dimensions . }}
+        {{ $s.SetInMap "bnt_attr" (print $itemKey $key) . }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+
+  {{ with .custom_fields }}
+    {{ range $index, $custom := . }}
+      {{ with .name }}
+        {{ $key := print $itemKey "custom" (add $index 1) "-" }}
+        {{ $s.SetInMap "bnt_attr" (print $key "name") . }}
+        {{ with $custom.options }}
+          {{ $options := delimit . "|" }}
+          {{ $s.SetInMap "bnt_attr" (print $key "options") $options }}
+        {{ end }}
+        {{ with $custom.value }}
+          {{ $s.SetInMap "bnt_attr" (print $key "value") . }}
+        {{ end }}
+        {{ with $custom.required }}
+          {{ $s.SetInMap "bnt_attr" (print $key "required") true }}
+        {{ end }}
+        {{ with $custom.placeholder }}
+          {{ $s.SetInMap "bnt_attr" (print $key "placeholder") . }}
+        {{ end }}
+        {{ with $custom.type }}
+          {{ if eq . "checkbox" "textarea" "readonly" }}
+            {{ $s.SetInMap "bnt_attr" (print $key "type") . }}
+          {{ end }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+  {{ $s.SetInMap "return" "button_attributes" ($s.Get "bnt_attr") }}
+
+{{ end }}
+
+{{ return $s.Get "return" }}

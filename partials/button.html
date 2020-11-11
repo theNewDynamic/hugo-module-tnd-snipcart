@@ -1,9 +1,0 @@
-{{ $buttonData := partial "tnd-snipcart/private/GetButtonData" . }}
-{{ with $buttonData }}
-  {{ $attrs := merge .attributes (dict "class" "snipcart-add-item px-4 py-2 bg-blue-500 text-white font-bold rounded" ) }}
-  {{ partial "tnd-tags/tag" (dict "name" "button" "attr" $attrs "inner" .inner) }}
-  <code class="block text-red-300">
-    {{ partial "tnd-tags/tag" (dict "name" "button" "attr" $attrs "inner" .inner) | string }}
-  </code>
-{{ end }}
-

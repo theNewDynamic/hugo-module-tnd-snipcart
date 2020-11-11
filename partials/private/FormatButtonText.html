@@ -15,15 +15,14 @@
 
 */}}
 {{ $button_text := "Buy" }}
-{{ with partialCached "tnd-snipcart/private/GetConfig" "GetConfig" }}
-  {{ with .buy_button_text }}
-    {{ $button_text = . }}
-  {{ end }}
+{{ with .settings.buy_button_text }}
+  {{ $button_text = . }}
 {{ end }}
+
 
 {{ with findRE "{{[a-z]*}}" $button_text }}
   {{ if in . "{{price}}" }}
-    {{ with $.price }}
+    {{ with $.data.price }}
       {{ with partialCached "tnd-snipcart/private/FormatPrice" . . }}
         {{ $button_text = replace $button_text "{{price}}" . }}
       {{ end }}

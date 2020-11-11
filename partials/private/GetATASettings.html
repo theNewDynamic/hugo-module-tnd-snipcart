@@ -1,0 +1,12 @@
+{{ $settings := dict "buy_button_text" "Buy Default" }}
+{{ $config := partialCached "tnd-snipcart/private/GetConfig" "GetConfig" }}
+{{ with $config.forms }}
+  {{ with index . "_default" }}
+    {{ $settings = merge $settings . }}
+  {{ end }}
+  {{ with index . $ }}
+    {{ $settings = merge $settings . }}
+  {{ end }}
+{{ end }}
+
+{{ return $settings }}
