@@ -1,0 +1,22 @@
+{{/*
+  field
+  Looks for a partial matching the field's .name in /tnd-snipcart/fields/ and print resulting HTML if found.
+  Defaults to the built-in tnd-snipcart/fields/_default
+
+  @author @regisphilibert
+
+  @context Map
+            String (.name)
+            String (.id)
+            String (.label)
+            Any (.value)?
+            Slice (.options)?
+
+  @access private
+
+*/}}
+{{ if templates.Exists (print "partials/tnd-snipcart/fields/" .name ".html") }}
+  {{ partial (print "tnd-snipcart/fields/" .name ".html") . }}
+{{ else }}
+  {{ partial "tnd-snipcart/fields/_default.html" . }}
+{{ end }}

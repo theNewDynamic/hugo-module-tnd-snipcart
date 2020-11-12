@@ -57,6 +57,7 @@
   {{ end }}
   {{ $s.SetInMap "return" "buy_button_classes" (delimit $button_classes " ") }}
 
+  {{/* Button Attributes */}}
   {{ with partialCached "tnd-snipcart/private/GetButtonAttributes" . . }}
     {{ $s.Set "button_attributes" dict }}
     {{ range $key, $value := . }}
@@ -64,6 +65,13 @@
     {{ end }}
     {{ $s.SetInMap "return" "buy_button_attributes" ($s.Get "button_attributes") }}
   {{ end }}
+
+  {{/* Form Fields */}}
+  {{ $params := dict "product" . "settings" $settings }}
+  {{ with partialCached "tnd-snipcart/private/GetFormFields" $params $params }}
+    {{ $s.SetInMap "return" "fields" . }}
+  {{ end }}
+
 {{ end }}
 
 

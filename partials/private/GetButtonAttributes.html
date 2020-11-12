@@ -24,6 +24,14 @@
     {{ end }}
   {{ end }}
 
+  {{ with .min_quantity }}
+    {{ $s.SetInMap "data" (print $itemKey "min-quantity") . }}
+  {{ end }}
+
+  {{ with .max_quantity }}
+    {{ $s.SetInMap "data" (print $itemKey "max-quantity") . }}
+  {{ end }}
+
   {{ with .metadata }}
     {{ $s.SetInMap "data" (print $itemKey "metadata") (. | jsonify) }}
   {{ end }}

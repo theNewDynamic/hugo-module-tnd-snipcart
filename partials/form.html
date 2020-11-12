@@ -17,12 +17,27 @@
       OR {{ partial "tnd-snipcart/form" (dict "Page" $ "settings" "homepage") }}
     {{ end }}
 */}}
-{{ $buttonData := partial "tnd-snipcart/private/GetFormData" . }}
+{{ $formData := partial "tnd-snipcart/private/GetFormData" . }}
 {{ $config := partialCached "tnd-snipcart/private/GetConfig" "GetConfig" }}
-{{ with $buttonData }}
+{{ with $formData }}
+  {{ with .fields }}
+    {{ range . }}
+      {{ partial "tnd-snipcart/private/field.html" . }}
+    {{ end }}
+  {{ end }}
+
   {{ $button_attrs := merge .buy_button_attributes (dict "class" .buy_button_classes ) }}
   {{ partial "tnd-tags/tag" (dict "name" "button" "attr" $button_attrs "inner" .button_inner) }}
   {{ if $config.debug }}
+    {{ $entry := $ }}
+    {{ with $.Page }}
+      {{ $entry = $.Page }}
+    {{ end }}
+    <div class="my-8">
+      {{ with partial "tnd-snipcart/private/GetProductData" $entry }}
+        {{ highlight (. | transform.Remarshal "yaml") "yaml" "" }}
+      {{ end }}
+    </div>
     <code class="block text-red-300">
       {{ partial "tnd-tags/tag" (dict "name" "button" "attr" $button_attrs "inner" .button_inner) | string }}
     </code>

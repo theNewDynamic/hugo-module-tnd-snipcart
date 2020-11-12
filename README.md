@@ -28,6 +28,40 @@ module:
 
 ## Usage
 
+### Front Matter
+```yaml
+product:
+  price: 17.99
+  metadata:
+    something: great
+    somewhere: NYC
+  categories:
+    - something
+    - somewhere
+  weight: 195
+  dimensions:
+    width: 34
+    length: 100
+    height: 22
+  min_quantity: 2
+  max_quantity: 5
+  custom_fields:
+    - name: Gift Note
+      type: textarea
+      placeholder: Enter notes here
+      required: true
+    - name: Hidden
+      type: readonly
+      value: that-value
+    - name: Size
+      id: size
+      options:
+        - S
+        - M
+        - L
+    - name: Gift
+      type: checkbox
+```
 ### Some Partial/Feature
 
 #### Examples
@@ -40,7 +74,21 @@ Settings are added to the project's parameter under the `tnd_snipcart` map as sh
 # config.yaml
 params:
   tnd_snipcart:
-    [...]
+    forms:
+      _default:
+        buy_button_text: Buy Form Defaults
+        buy_button_classes: "px-4 py-2 bg-blue-500 text-white font-bold rounded"
+      list:
+        buy_button_text: Buy {{price}}$
+        fields:
+          - id: quantity
+            name: Quantity
+          - id: size
+            name: Size
+          - id: colors
+            name: Coloring
+      single:
+        buy_button_text: Buy!
 ```
 
 #### Configure Key 1

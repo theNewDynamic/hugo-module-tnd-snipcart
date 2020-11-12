@@ -1,0 +1,37 @@
+
+{{/*
+  fields/_default
+
+  @author @regisphilibert
+
+  @context Map
+          String (.name)
+          String (.id)
+          String (.label)
+          Any (.value)?
+          Slice (.options)?
+
+  @access public
+
+  @use
+    - tnd-tags/tag
+
+  @example - Go Template
+    {{ partial "path" context }}
+    {{ partialCached "path" context "variant" }}
+*/}}
+
+{{ partial "tnd-tags/tag" (dict "name" "label" "inner" .label "attr" (dict "for" .id)) }}
+{{ if eq .type "select" }}
+  <select name="{{ .name }}" id="{{ .id }}">
+    {{ range .options }}
+      <option value="{{ . }}">{{ . }}</option>
+    {{ end }}
+  </select>
+{{ else }}
+  {{ $field_attr := merge . (dict "class" "border") }}
+  {{ with .value }}
+    {{ $field_attr = merge $field_attr (dict "value" .) }}
+  {{ end }}
+  {{ partial "tnd-tags/tag" (dict "name" "input" "attr" $field_attr) }}
+{{ end }}

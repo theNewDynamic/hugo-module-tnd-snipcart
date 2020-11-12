@@ -1,0 +1,86 @@
+{{/*
+  GetFormFields
+  Each AddToCart forms can sport any number of fields matching either 
+    - A custom field defined by user.
+    - A built-in quantity field.
+
+  @author @regisphilibert
+
+  @context Map (.)
+      Map (.settings)
+        See @return fo private/GetFormSettings
+      Map (.product)
+        See @return fo private/GetProductData
+  @access public
+
+  @example - Go Template
+    {{ partial "path" context }}
+    {{ partialCached "path" context "variant" }}
+*/}}
+{{ $fields := slice }}
+{{ $s := newScratch }}
+
+{{/* We retrieve the list fields defined in the Form settings  */}}
+{{ $display_fields := slice }}
+{{ with .settings }}
+  {{ with .fields }}
+    {{ $display_fields = . }}
+  {{ end }}
+{{ end }}
+
+{{/* User define a list of field to be displayed on a form through the module configuration
+  This field's id points to the custom_field declared on a product.
+  $field_settings variable holds the value defined in the module param:
+    String (.id) 
+    String (.name)?
+  */}}
+{{ range $field_settings := $display_fields }}
+  {{/* If quantity is at cursor (defined by user in Form's fields) we compute the following: */}}
+  {{ if eq .id "quantity" }}
+    {{ $label := default .name "Quantity" }}
+    {{ $s.Set "quantity" (dict "name" "quantity" "id" (print $.product.id "-" .name) "label" $label "type" "number") }}
+    {{ $min := 1 }}
+    {{ $max := 20 }}
+    {{ with $.product.min_quantity }}
+      {{ $min = . }}
+    {{ end }}
+    {{ with $.product.max_quantity }}
+      {{ $max = . }}
+    {{ end }}
+    {{ $s.SetInMap "quantity" "min" $min }}
+    {{ $s.SetInMap "quantity" "value" $min }}
+    {{ $s.SetInMap "quantity" "max" $max }}
+
+    {{ $fields = $fields | append ($s.Get "quantity") }}
+  {{ else }}
+    {{/* Else a custom field has been defined by user to produce its "field" within the form */}}
+    {{ with $.product.custom_fields }}
+      {{/* $custom_field, as opposed to $field_settings hold the data of the custom_field declared on the product level. */}}
+      {{ $custom_field := false }}
+      {{ with where . ".id" $field_settings.id }}
+        {{ $custom_field = index . 0 }}
+      {{ end }}
+      {{/* We found a custom_field matching the field requested by user */}}
+      {{ with $custom_field }}
+        {{/* Label is defined on the module param's level or default on custom_field name */}}
+        {{ $label := default $field_settings.name .name }}
+        {{ $name := $custom_field.name | urlize }}
+        {{ $s.Set "data" (dict "type" (default .type "text")) }}
+        {{ $s.SetInMap "data" "label" $label }}
+        {{ $s.SetInMap "data" "id" (print $.product.id "-" $name) }}
+        {{ $s.SetInMap "data" "name" $name }}
+        {{ with .options }}
+          {{ $s.SetInMap "data" "type" "select" }}
+          {{ $options := slice }}
+          {{ range . }}
+            {{ $options = $options | append . }}
+          {{ end }}
+          {{ $s.SetInMap "data" "options" $options }}
+          {{ $fields = $fields | append ($s.Get "data") }}
+        {{ end }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{ return $fields }}
