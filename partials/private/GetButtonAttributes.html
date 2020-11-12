@@ -17,29 +17,48 @@
 {{ $s := newScratch }}
 {{ $s.Set "data" dict }}
 {{ $itemKey := "data-item-" }}
+
+
 {{ with $product_data := . }}
+
+  {{/* Basic, unchanged Product data */}}
   {{ range $key := slice "id" "url" "name" "price" "description" "weight" "width" "length" "height" }}
     {{ with index $product_data . }}
     {{ $s.SetInMap "data" (print $itemKey $key) . }}
     {{ end }}
   {{ end }}
 
+
+  {{/* Quantity, Min, Max*/}}
+  {{ $min_quantity := 1 }}
   {{ with .min_quantity }}
-    {{ $s.SetInMap "data" (print $itemKey "min-quantity") . }}
+    {{ $min_quantity = . }}
   {{ end }}
+  {{ $quantity := $min_quantity }}
+  {{ with .quantity }}
+    {{ $quantity = . }}
+  {{ end }}
+
+  {{ $s.SetInMap "data" (print $itemKey "min-quantity") $min_quantity }}
+
+  {{ $s.SetInMap "data" (print $itemKey "quantity") $quantity }}
+
 
   {{ with .max_quantity }}
     {{ $s.SetInMap "data" (print $itemKey "max-quantity") . }}
   {{ end }}
 
+  {{/* Metadata as JSON */}}
   {{ with .metadata }}
     {{ $s.SetInMap "data" (print $itemKey "metadata") (. | jsonify) }}
   {{ end }}
 
+  {{/* Categories as cat1|cat2|cat3 */}}
   {{ with .categories }}
     {{ $s.SetInMap "data" (print $itemKey "categories") (delimit . "|") }}
   {{ end }}
 
+  {{/* Custom fields */}}
   {{ with .custom_fields }}
     {{ range $index, $custom := . }}
       {{ with .name }}
