@@ -86,8 +86,6 @@
   {{ with partial "tnd-snipcart/AddProductData" . }}
     {{ $return = merge $return . }}
   {{ end }}
-{{ else }}
-  {{ errorf "%#v" "not found" }}
 {{ end }}
 
 {{ return $return }}
