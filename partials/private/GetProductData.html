@@ -27,6 +27,7 @@
     Map (.custom_fields)?
 
 */}}
+{{ $return := dict }}
 {{ $s := newScratch }}
 {{ $s.Set "data" dict }}
 
@@ -79,5 +80,14 @@
   {{ end }}
 
 {{ end }}
+{{ $return = $s.Get "data" }}
 
-{{ return $s.Get "data" }}
+{{ if templates.Exists "partials/tnd-snipcart/AddProductData.html" }}
+  {{ with partial "tnd-snipcart/AddProductData" . }}
+    {{ $return = merge $return . }}
+  {{ end }}
+{{ else }}
+  {{ errorf "%#v" "not found" }}
+{{ end }}
+
+{{ return $return }}
