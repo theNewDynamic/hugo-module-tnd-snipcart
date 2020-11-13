@@ -20,16 +20,15 @@
     {{ partial "path" context }}
     {{ partialCached "path" context "variant" }}
 */}}
-
 {{ partial "tnd-tags/tag" (dict "name" "label" "inner" .label "attr" (dict "for" .id)) }}
 {{ if eq .type "select" }}
-  <select name="{{ .name }}" id="{{ .id }}">
+  <select name="{{ .name }}" id="{{ .id }}" data-product="{{ .product }}">
     {{ range .options }}
       <option value="{{ . }}">{{ . }}</option>
     {{ end }}
   </select>
 {{ else }}
-  {{ $field_attr := merge . (dict "class" "border") }}
+  {{ $field_attr := merge . (dict "class" "border" "data-product" .product) }}
   {{ with .value }}
     {{ $field_attr = merge $field_attr (dict "value" .) }}
   {{ end }}

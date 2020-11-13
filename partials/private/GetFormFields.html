@@ -38,7 +38,7 @@
   {{/* If quantity is at cursor (defined by user in Form's fields) we compute the following: */}}
   {{ if eq .id "quantity" }}
     {{ $label := default .name "Quantity" }}
-    {{ $s.Set "quantity" (dict "name" "quantity" "id" (print $.product.id "-" .name) "label" $label "type" "number") }}
+    {{ $s.Set "quantity" (dict "name" "quantity" "id" (print $.product.id "-" .name) "label" $label "type" "number" "product" $.product.id ) }}
     {{ $min := 1 }}
     {{ $max := 20 }}
     {{ with $.product.min_quantity }}
@@ -65,9 +65,11 @@
         {{/* Label is defined on the module param's level or default on custom_field name */}}
         {{ $label := default $field_settings.name .name }}
         {{ $name := $custom_field.name | urlize }}
+        {{ $s.SetInMap "data" "product" $.product.id }}
         {{ $s.Set "data" (dict "type" (default .type "text")) }}
         {{ $s.SetInMap "data" "label" $label }}
         {{ $s.SetInMap "data" "id" (print $.product.id "-" $name) }}
+        {{ $s.SetInMap "data" "product" $.product.id  }}
         {{ $s.SetInMap "data" "name" $name }}
         {{ with .options }}
           {{ $s.SetInMap "data" "type" "select" }}
