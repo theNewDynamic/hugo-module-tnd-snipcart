@@ -64,7 +64,7 @@
   {{ end }}
   {{ $s.SetInMap "data" "description" $description }}
 
-  {{ range $key := slice "metadata" "categories" "weight" "max_quantity" "min_quantity" "custom_fields" }}
+  {{ range $key := slice "metadata" "categories" "image" "weight" "max_quantity" "min_quantity" "custom_fields" }}
     {{ with index $product . }}
       {{ $s.SetInMap "data" $key . }}
     {{ end }}
@@ -79,6 +79,5 @@
   {{ end }}
 
 {{ end }}
-
 
 {{ return $s.Get "data" }}

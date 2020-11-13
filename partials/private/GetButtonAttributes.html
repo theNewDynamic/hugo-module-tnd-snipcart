@@ -24,7 +24,7 @@
   {{ $s.SetInMap "data" "id" .id }}
 
   {{/* Basic, unchanged Product data */}}
-  {{ range $key := slice "id" "url" "name" "price" "description" "weight" "width" "length" "height" }}
+  {{ range $key := slice "id" "url" "name" "image" "price" "description" "weight" "width" "length" "height" }}
     {{ with index $product_data . }}
     {{ $s.SetInMap "data" (print $itemKey $key) . }}
     {{ end }}
