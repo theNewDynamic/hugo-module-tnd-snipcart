@@ -1,3 +1,15 @@
+{{/*
+  GetAPIKey
+  Returns the API key as defined either as  SNIPCART_API_KEY env var or from the module settings.
+
+  @author @regisphilibert
+
+  @context Any (.)
+
+  @access private
+
+  @return String
+*/}}
 {{ $key := "" }}
 {{ with getenv "SNIPCART_API_KEY" }}
   {{ $key = . }}

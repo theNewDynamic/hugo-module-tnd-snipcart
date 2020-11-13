@@ -1,5 +1,23 @@
-{{ with partialCached "tnd-snipcart/private/GetAPIKey" "GetAPIKey" }}
+{{/*
+  tags
+
+  @author @regisphilibert
+
+  @context Any (.)
+
+  @access public
+
+  @example Go template
+    <head>
+      {{ partialCached "tnd-snipcart/tags.html" . }}
+    </head>
+
+*/}}
+{{- $config := partialCached "tnd-snipcart/private/GetConfig" "GetConfig" -}}
+{{- if not $config.disable -}}
+  {{ with partialCached "tnd-snipcart/private/GetAPIKey" "GetAPIKey" }}
 <link rel="stylesheet" href="https://cdn.snipcart.com/themes/v3.0.24/default/snipcart.css" />
 <script defer src="https://cdn.snipcart.com/themes/v3.0.24/default/snipcart.js"></script>
 <div hidden id="snipcart" data-api-key="{{ . }}"></div>
-{{ end }}
+  {{- end -}}
+{{- end -}}
