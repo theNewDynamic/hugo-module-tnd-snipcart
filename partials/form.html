@@ -17,9 +17,8 @@
       OR {{ partial "tnd-snipcart/form" (dict "Page" $ "settings" "homepage") }}
     {{ end }}
 */}}
-{{ $formData := partial "tnd-snipcart/private/GetFormData" . }}
 {{ $config := partialCached "tnd-snipcart/private/GetConfig" "GetConfig" }}
-{{ with $formData }}
+{{ with partial "tnd-snipcart/private/GetFormData" . }}
   {{ with .fields }}
     {{ range . }}
       {{ partial "tnd-snipcart/private/field.html" . }}

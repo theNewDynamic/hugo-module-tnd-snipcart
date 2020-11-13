@@ -29,9 +29,26 @@
 */}}
 {{ $s := newScratch }}
 {{ $s.Set "data" dict }}
-{{ with $product := $.Params.product }}
-  {{ $s.SetInMap "data" "id" $.File.UniqueID }}
-  {{ $s.SetInMap "data" "url" $.Permalink }}
+
+{{/* The Key underwhich the product information map is stored is defined by the user, defaulting on "product" */}}
+{{ $FMKey := partialCached "tnd-snipcart/private/GetFrontMatterKey" "GetFrontMatterKey"}}
+{{/* We want to be able to seemlessly use either a Content File and its .Params or a Data file without those. */}}
+{{ $dataSet := $ }}
+{{ with $.Params }}
+  {{ $dataSet = . }}
+{{ end }}
+
+
+{{ with $product := index $dataSet $FMKey }}
+  {{ $id := "" }}
+  {{ with $.File.UniqueID }}
+    {{ $id = . }}
+  {{ end }}
+  {{ with $product.id }}
+    {{ $id = . }}
+  {{ end }}
+  {{ $s.SetInMap "data" "id" $id }}
+  {{ $s.SetInMap "data" "url" $.RelPermalink }}
   {{ $s.SetInMap "data" "name" $.Title }}
   {{ with .price }}
     {{ $s.SetInMap "data" "price" (partialCached "tnd-snipcart/private/FormatPrice" . .) }}

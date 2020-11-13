@@ -1,6 +1,12 @@
 {{ $key := "" }}
 {{ with getenv "SNIPCART_API_KEY" }}
   {{ $key = . }}
+{{ else }}
+  {{ with partialCached "tnd-snipcart/private/GetConfig" "GetConfig" }}
+    {{ with .api_key }}
+      {{ $key = . }}
+    {{ end }}
+  {{ end }}
 {{ end }}
 
 {{ return $key }}

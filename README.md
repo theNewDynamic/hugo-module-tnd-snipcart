@@ -74,6 +74,8 @@ Settings are added to the project's parameter under the `tnd_snipcart` map as sh
 # config.yaml
 params:
   tnd_snipcart:
+    api_key: MTkz................A3MTI2
+    front_matter_key: sales
     forms:
       _default:
         buy_button_text: Buy Form Defaults

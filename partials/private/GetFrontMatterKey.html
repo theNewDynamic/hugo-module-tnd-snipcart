@@ -1,0 +1,21 @@
+{{/*
+  GetFrontMatterKey
+  Returns the key under which the sales'data is stored under Params or any data file. (defined by user defaults on "product")
+
+  @author @regisphilibert
+
+  @context Any (.)
+
+  @access private
+
+  @return String
+
+*/}}
+{{ $key := "product" }}
+{{ with partialCached "tnd-snipcart/private/GetConfig" "GetConfig" }}
+  {{ with .front_matter_key }}
+    {{ $key = . }}
+  {{ end }}
+{{ end }}
+
+{{ return $key }}
