@@ -19,10 +19,14 @@
 */}}
 {{ $config := partialCached "tnd-snipcart/private/GetConfig" "GetConfig" }}
 {{ if not $config.disable }}
+  
   {{ with partial "tnd-snipcart/private/GetFormData" . }}
+  <div class="tnd-snipcart-form">
     {{ with .fields }}
       {{ range . }}
-        {{ partial "tnd-snipcart/private/field.html" . }}
+        <div class="tnd-snipcart-control">
+          {{ partial "tnd-snipcart/private/field.html" . }}
+        </div>
       {{ end }}
     {{ end }}
 
@@ -42,6 +46,7 @@
         {{ partial "tnd-tags/tag" (dict "name" "button" "attr" $button_attrs "inner" .button_inner) | string }}
       </code>
     {{ end }}
+  </div>
   {{ end }}
 {{ end }}
 
