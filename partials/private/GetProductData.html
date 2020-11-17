@@ -65,6 +65,10 @@
   {{ end }}
   {{ $s.SetInMap "data" "description" $description }}
 
+  {{ with $.Params.image }}
+    {{ $s.SetInMap "data" "image" . }}
+  {{ end }}
+
   {{ range $key := slice "metadata" "categories" "image" "weight" "max_quantity" "min_quantity" "custom_fields" }}
     {{ with index $product . }}
       {{ $s.SetInMap "data" $key . }}
