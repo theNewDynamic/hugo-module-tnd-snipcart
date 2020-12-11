@@ -1,0 +1,28 @@
+{{/*
+  GetGobalConfigAttributes
+  Truns `site.tnd_snipcart.global into a map with key prefixed with `data-config-`. This is ready to be consumed 
+  by the tnd-tags/tag partial.
+
+  @author @regisphilibert
+
+  @context Any (.)
+
+  @access public
+
+  @return Map
+
+  @use
+    - tnd-snipcart/private/GetConfig
+
+*/}}
+{{ $s := newScratch }}
+{{ $s.Set "attrs" dict }}
+{{ with partialCached "tnd-snipcart/private/GetConfig" "GetConfig" }}
+  {{ with .global }}
+    {{ range $key, $value := . }}à
+      {{ $s.SetInMap "attrs" (printf `data-config-%s` $key) $value }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+
+{{ return $s.Get "attrs" }}

@@ -1,0 +1,51 @@
+{{/*
+  GetTags
+  Constructs the Attributes to be passed to the `tnd-tags/tag` invocation on `/tnd-snipcart/tags.html`
+
+  @author @regisphilibert
+
+  @context Any (.)
+
+  @return Slice of Maps
+
+  @access private
+
+  @use
+    - tnd-snipcart/private/GetConfig
+    - tnd-snipcart/private/GetAPIKey
+    - tnd-snipcart/private/GetVersion
+    - tnd-snipcart/private/GetGlobalConfigAttributes
+
+  @example - Go Template
+    {{ partial "path" context }}
+    {{ partialCached "path" context "variant" }}
+*/}}
+{{ $tags := slice }}
+{{ $config := partialCached "tnd-snipcart/private/GetConfig" "GetConfig" }}
+{{ if not $config.disable }}
+  {{ with $api_key := partialCached "tnd-snipcart/private/GetAPIKey" "GetAPIKey" }}
+    {{ with partialCached "tnd-snipcart/private/GetVersion" "GetVersion" }}
+      {{/* Style Tag 
+        <link href="https://cdn.snipcart.com/themes/v{version}/default/snipcart.css" rel="stylesheet"> */}}
+      {{ $style_attr := dict "name" "link" "attr" (dict "rel" "stylesheet" "href" (printf `https://cdn.snipcart.com/themes/v%s/default/snipcart.css` .)) }}
+      {{ $tags = $tags | append $style_attr }}
+
+      {{/* Javascript Tag
+        <script defer src="https://cdn.snipcart.com/themes/v{version}/default/snipcart.js"></script> */}}
+      {{ $js_attr := dict "name" "script" "attr" (dict "defer" false "src" (printf `https://cdn.snipcart.com/themes/v%s/default/snipcart.js` .)) }}
+      {{ $tags = $tags | append $js_attr }}
+    {{ end }}
+
+    {{/* API Tag 
+      <div data-api-key="{API_KEY}" data-config-{any}?* id="snipcart"></div> */}}
+    {{ $tag_attr := dict "id" "snipcart" "data-api-key" $api_key }}
+    {{/* Global settings are appended to this tag as data-config-something attributes */}}
+    {{ with partialCached "tnd-snipcart/private/GetGlobalConfigAttributes" "GetGlobalConfigAttributes" }}
+      {{ $tag_attr = merge $tag_attr . }}
+    {{ end }}
+    {{ $div_attr := dict "name" "div" "inner" " " "attr" $tag_attr }}
+    {{ $tags = $tags | append $div_attr }}
+  {{ end }}
+{{ end }}
+
+{{ return $tags }}
