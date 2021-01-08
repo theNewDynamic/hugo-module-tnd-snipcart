@@ -39,6 +39,7 @@
   {{ $dataSet = . }}
 {{ end }}
 
+{{ $config := partialCached "tnd-snipcart/private/GetConfig" "GetConfig" }}
 
 {{ with $product := index $dataSet $FMKey }}
   {{ $id := "" }}
@@ -69,12 +70,20 @@
     {{ $s.SetInMap "data" "image" . }}
   {{ end }}
 
-  {{ range $key := slice "metadata" "categories" "image" "weight" "max_quantity" "min_quantity" "custom_fields" }}
+  {{ range $key := slice "metadata" "categories" "image" "max_quantity" "min_quantity" "custom_fields" }}
     {{ with index $product . }}
       {{ $s.SetInMap "data" $key . }}
     {{ end }}
   {{ end }}
-
+  {{ with $product.weight }}
+    {{ $weight := . }}
+    {{ if eq $config.weight_unit "ounces" "ounce" }}
+      {{ with partialCached "tnd-snipcart/private/GetGramsFromOunces" . . }}
+        {{ $weight = . }}
+      {{ end }}
+    {{ end }}
+    {{ $s.SetInMap "data" "weight" $weight }}
+  {{ end }}
   {{ with $dimensions := .dimensions }}
     {{ range $key := slice "width" "length" "height" }}
       {{ with index $dimensions . }}

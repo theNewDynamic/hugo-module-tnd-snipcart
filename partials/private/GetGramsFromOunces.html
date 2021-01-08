@@ -1,0 +1,17 @@
+{{/*
+  Converts Onces in Grams
+
+  @author @budpar @regisphilibert
+
+  @context String | Float | Int
+
+  @access public
+
+  @return Int
+
+  @example - Go Template
+  {{ $grams := partialCached "tnd-snipcart/private/GetGramsFromOunces" 6.1 6.1}}
+*/}}
+{{ $weight_in_ounce := . }}
+{{ $weight_in_grams := math.Round (mul (float $weight_in_ounce) 28.34952) }}
+{{ return $weight_in_grams }}

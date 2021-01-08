@@ -19,7 +19,7 @@
 {{ $s.Set "attrs" dict }}
 {{ with partialCached "tnd-snipcart/private/GetConfig" "GetConfig" }}
   {{ with .global }}
-    {{ range $key, $value := . }}à
+    {{ range $key, $value := . }}
       {{ $s.SetInMap "attrs" (printf `data-config-%s` $key) $value }}
     {{ end }}
   {{ end }}

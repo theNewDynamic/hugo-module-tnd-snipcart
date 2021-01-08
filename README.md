@@ -76,6 +76,7 @@ params:
   tnd_snipcart:
     api_key: MTkz................A3MTI2
     front_matter_key: sales
+    weight_unit: grams
     forms:
       _default:
         buy_button_text: Buy Form Defaults
