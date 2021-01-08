@@ -28,8 +28,16 @@ module:
 
 ## Usage
 
-### Front Matter
+The module principal feature is to read the Front Matter information of a given content file stored under a given key (default `product`) and use this to build the "Add to cart" form Snipcart needs in order to start the order process.
+
+Anywhere in your template you can invoke the `tnd-snipcart/form` partial to print the form. More information about this partial usage is available below.
+
+### Product Data
+Product data is structured using the Snipcart API and defined under the content file Front Matter under the `product` key or any other key defined in the Module settings.
+
 ```yaml
+# my-product.md
+title: My Product
 product:
   price: 17.99
   metadata:
@@ -45,6 +53,17 @@ product:
     height: 22
   min_quantity: 2
   max_quantity: 5
+```
+
+#### Custom Fields
+
+In addition to default Snipcart value, user can add Custom Fields to any product. Those fields will be added to the "Add to cart" step once the customer clicks on the Buy Button.
+
+```yaml
+# my-product.md
+title: My Product
+product:
+  [...]
   custom_fields:
     - name: Gift Note
       type: textarea
@@ -61,14 +80,51 @@ product:
         - L
     - name: Gift
       type: checkbox
-```
-### Some Partial/Feature
+``` 
 
-#### Examples
+
+### Buy Forms
+
+The module allow user to invoke serveral different Buy Forms, each bearing their own settings. The `_default` form settings will be invoked when no settings are passed to the `tnd-snipcart/form` partial.
+
+Following the Module settings example below:
+
+```yaml
+# params.yaml
+tnd_snipcart:
+  forms:
+    _default:
+      buy_button_text: Buy Form Defaults
+      buy_button_classes: "px-4 py-2 bg-blue-500 text-white font-bold rounded"
+    list:
+      buy_button_text: Buy {{price}}$
+      fields:
+        - id: quantity
+          name: Quantity
+        - id: size
+          name: Size
+        - id: colors
+          name: Coloring
+    single:
+      buy_button_text: Buy!
+```
+
+The `tnd-snipcart/form` partial will be used as follow:
+
+|partial|settings used|
+|---|---|
+|`{{ partial "tnd-snipcart/form" $ }}`| `_default`|
+|`{{ partial "tnd-snipcart/form" (dict "Page" $ "settings" list) }}`| `..._default`, `list`|
+
+#### Forms Fields
+
+User can preset fields to populate the forms in addition to the "Buy Button".
+
+The field ID must match the one as set in the Product's custom field.
 
 ### Settings
 
-Settings are added to the project's parameter under the `tnd_snipcart` map as shown below.
+Settings are added to the project's config params under the `tnd_snipcart` map as shown below.
 
 ```yaml
 # config.yaml
@@ -77,30 +133,42 @@ params:
     api_key: MTkz................A3MTI2
     front_matter_key: sales
     weight_unit: grams
+    global:
+      modal-style: side
     forms:
-      _default:
-        buy_button_text: Buy Form Defaults
-        buy_button_classes: "px-4 py-2 bg-blue-500 text-white font-bold rounded"
-      list:
-        buy_button_text: Buy {{price}}$
-        fields:
-          - id: quantity
-            name: Quantity
-          - id: size
-            name: Size
-          - id: colors
-            name: Coloring
-      single:
-        buy_button_text: Buy!
+      # detailed above
 ```
 
-#### Configure Key 1
+#### api_key 
+Your snipcart API key as a string. As this is a public Key you don't have to worry about obfuscating it from your repo.
 
-#### Configure Key 2
+#### front_matter_key (default: product)
 
-#### Defaults
+By default, you should store product information under `product` key in your Front Matter. But if your project uses something else like `sale_data` or else, just set that key here.
 
-ld copy/paste the above to your settings and append with new extensions.
+#### weight_unit (default: grams)
+Snipcart speaks in Grams, but if your editor uses Ounces, you can set this key to `ounces` and the module to convert those to grams before using the data with Snipcart.
+
+#### global
+
+Snipcart allow to add some limited [global configuration](https://docs.snipcart.com/v3/setup/installation#global-configurations)
+
+For now only two are available:
+- add-product-behavior
+- modal-style
+
+The `global` key takes an map of such Snipcart global config keys without their `data-config` prefix.
+
+For example, in order to use the side modal style:
+
+```yaml
+# config.yaml
+params:
+  tnd_snipcart:
+    [...]
+    global:
+      modal-style: side
+```
 
 ## theNewDynamic
 
