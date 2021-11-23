@@ -80,8 +80,7 @@ product:
         - L
     - name: Gift
       type: checkbox
-``` 
-
+```
 
 ### Buy Forms
 
