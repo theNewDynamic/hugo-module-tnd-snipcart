@@ -31,7 +31,8 @@
 {{ $s := newScratch }}
 {{ $s.Set "data" dict }}
 
-{{/* The Key underwhich the product information map is stored is defined by the user, defaulting on "product" */}}
+{{/* The Key underwhich the product information map is stored is defined by the user, defaulting on "product" 
+if set to 'none'. we'll look for the data at the root of the Params/Data */}}
 {{ $FMKey := partialCached "tnd-snipcart/private/GetFrontMatterKey" "GetFrontMatterKey"}}
 {{/* We want to be able to seemlessly use either a Content File and its .Params or a Data file without those. */}}
 {{ $dataSet := $ }}
@@ -41,7 +42,15 @@
 
 {{ $config := partialCached "tnd-snipcart/private/GetConfig" "GetConfig" }}
 
-{{ with $product := index $dataSet $FMKey }}
+{{ $product := dict }}
+{{/* If FMKey is not 'none' we get the data from there */}}
+{{ with $FMKey }}
+  {{ $product = index $dataSet $FMKey }}
+{{ else }}
+  {{ $product = $dataSet }}
+{{ end }}
+
+{{ with $product }}
   {{ $id := "" }}
   {{ with $.File.UniqueID }}
     {{ $id = . }}

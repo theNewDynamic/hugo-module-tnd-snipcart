@@ -1,0 +1,26 @@
+{{/* 
+	Add/Edit Product Data
+	
+	@author {user}
+	
+	@access public
+
+  @context Page (.)
+
+	User does not load the partial, as the component will. 
+	This allows to overwrite some Product Data with project's own.
+	Project's partial should live under `layouts/partials/tnd-snipcart/AddProductData.html`
+
+	@example In Partial
+    {{ $s := newScratch }}
+    {{ $s.Set "data" dict }}
+    {{ with $.Params.images }}
+      {{ with index . 0 }}
+        {{ $s.SetInMap "data" "image" (. | absURL) }}
+      {{ end }}
+    {{ end }}
+    {{ return $s.Get "data" }}
+
+ */}}
+
+ {{ return $.Get "data" }}

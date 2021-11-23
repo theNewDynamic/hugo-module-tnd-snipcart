@@ -82,7 +82,13 @@ product:
       type: checkbox
 ```
 
-### Buy Forms
+### Adding to your site
+
+`partial "tnd-snipcart/tags"`
+
+The partial should be invoked in your `<head>` and will print all the snicpart required tags.
+
+### Adding Buy Forms/Buttons
 
 The module allow user to invoke serveral different Buy Forms, each bearing their own settings. The `_default` form settings will be invoked when no settings are passed to the `tnd-snipcart/form` partial.
 
@@ -143,10 +149,10 @@ Your snipcart API key as a string. As this is a public Key you don't have to wor
 
 #### front_matter_key (default: product)
 
-By default, you should store product information under `product` key in your Front Matter. But if your project uses something else like `sale_data` or else, just set that key here.
+By default, you should store product information under `product` key in your Front Matter. But if your project uses something else like `sale_data` or else, just set that key here. If set to `none`, the module will look for the data at the root of your Front Matter (or file if a datafile)
 
 #### weight_unit (default: grams)
-Snipcart speaks in Grams, but if your editor uses Ounces, you can set this key to `ounces` and the module to convert those to grams before using the data with Snipcart.
+Snipcart speaks in Grams, but if your editor uses Ounces, you can set this key to `ounces` and the module to convert those to grams before using the data with Snipcart.se
 
 #### global
 
@@ -168,6 +174,10 @@ params:
     global:
       modal-style: side
 ```
+
+### Extend Product Data
+
+In order to customize the Product Data consumed by Hugo to build the buttons. User can create on the project level a `tnd-snipcart/AddProductData` partial.
 
 ## theNewDynamic
 

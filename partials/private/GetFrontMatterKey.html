@@ -14,7 +14,11 @@
 {{ $key := "product" }}
 {{ with partialCached "tnd-snipcart/private/GetConfig" "GetConfig" }}
   {{ with .front_matter_key }}
-    {{ $key = . }}
+    {{ if ne . "none" }}
+      {{ $key = . }}
+    {{ else }}
+      {{ $key = false }}
+    {{ end }}
   {{ end }}
 {{ end }}
 
