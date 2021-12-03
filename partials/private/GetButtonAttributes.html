@@ -50,6 +50,12 @@
     {{ $s.SetInMap "data" (print $itemKey "max-quantity") . }}
   {{ end }}
 
+  {{/* Taxable can be set but false, so we use isset and pass it down as string to ensure
+    tnd-tags prints the attribute value even if false */}}
+  {{ with isset . "taxable" }}
+    {{ $s.SetInMap "data" (print $itemKey "taxable") (string $product_data.taxable) }}
+  {{ end }}
+
   {{/* Metadata as JSON */}}
   {{ with .metadata }}
     {{ $s.SetInMap "data" (print $itemKey "metadata") (. | jsonify) }}
